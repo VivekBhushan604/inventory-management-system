@@ -75,6 +75,42 @@ class InventoryManagementSystem:
         print("Product not found.")
 
 
+    def sell_product(self):
+        if not self.products:
+            print("No products available.")
+            return
+
+        name = input("Enter product name to sell: ").strip()
+
+        for product in self.products:
+            if product.name.lower() == name.lower():
+
+                print(f"Current Stock: {product.quantity}")
+
+                try:
+                    quantity = int(input("Enter quantity to sell: "))
+                except ValueError:
+                    print("Please enter a valid quantity.")
+                    return
+
+                if quantity <= 0:
+                    print("Quantity must be greater than 0.")
+                    return
+
+                if quantity > product.quantity:
+                    print("Insufficient stock.")
+                    return
+
+                product.quantity -= quantity
+
+                print(f"{quantity} unit(s) sold successfully.")
+                print(f"Current Stock: {product.quantity}")
+
+                return
+
+        print("Product not found.")        
+
+
 system = InventoryManagementSystem()
 
 while True:
@@ -82,7 +118,8 @@ while True:
     print("1. Add Product")
     print("2. View Products")
     print("3. Update Product")
-    print("4. Exit")
+    print("4. Sell Product")
+    print("5. Exit")
 
     choice = input("Enter choice: ")
 
@@ -96,6 +133,9 @@ while True:
         system.update_product()
 
     elif choice == "4":
+        system.sell_product()
+
+    elif choice == "5":
         print("Goodbye!")
         break
 
