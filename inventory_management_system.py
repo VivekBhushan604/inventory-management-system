@@ -1,3 +1,5 @@
+import json
+
 class Product:
     def __init__(self, name, category, price, quantity):
         self.name = name
@@ -16,24 +18,105 @@ class Product:
 class InventoryManagementSystem:
     def __init__(self):
         self.products = []
+        self.load_products()
+
+    def save_products(self):
+        data = []
+
+        for product in self.products:
+            data.append({
+                "name": product.name,
+                "category": product.category,
+                "price": product.price,
+                "quantity": product.quantity
+            })
+
+        try:
+            with open("inventory.json", "w") as file:
+                json.dump(data, file, indent=4)
+
+        except Exception as e:
+            print("Error saving inventory:", e)
+
+
+    def load_products(self):
+        try:
+            with open("inventory.json", "r") as file:
+                data = json.load(file)
+
+                for item in data:
+                    self.products.append(
+                        Product(
+                            item["name"],
+                            item["category"],
+                            item["price"],
+                            item["quantity"]
+                        )
+                    )
+
+        except FileNotFoundError:
+            pass
+
+        except json.JSONDecodeError:
+            print("Invalid inventory file.")
+            self.products = []
+
 
     def add_product(self):
-        name = input("Enter product name: ").strip()
+        while True:
+            name = input("Enter product name: ").strip()
 
-        # Duplicate product name check
+            if name:
+                break
+
+            print("Product name cannot be empty.")
+        
         for product in self.products:
             if product.name.lower() == name.lower():
                 print("Product already exists.")
                 return
 
-        category = input("Enter category: ").strip()
-        price = float(input("Enter price: "))
-        quantity = int(input("Enter quantity: "))
+        
+        while True:
+            category = input("Enter category: ").strip()
+
+            if category:
+                break
+
+            print("Category cannot be empty.")
+
+        while True:
+            try:
+                    price = float(input("Enter price: "))
+
+                    if price <= 0:
+                        print("Price must be greater than 0.")
+                        continue
+
+                    break
+
+            except ValueError:
+                print("Invalid price.")
+        
+        while True:
+            try:
+                    quantity = int(input("Enter quantity: "))
+
+                    if quantity < 0:
+                        print("Quantity cannot be negative.")
+                        continue
+
+                    break
+
+            except ValueError:
+                print("Invalid Quantity.")
 
         product = Product(name, category, price, quantity)
         self.products.append(product)
+        self.save_products()
 
         print("Product added successfully.")
+
 
     def view_products(self):
         if not self.products:
@@ -60,15 +143,41 @@ class InventoryManagementSystem:
                 choice = input("Enter choice: ")
 
                 if choice == "1":
-                    product.price = float(input("Enter new price: "))
+                    while True:
+                        try:
+                            product.price = float(input("Enter new price: "))
+
+                            if product.price <= 0:
+                                print("Price must be greater than 0.")
+                                continue
+
+                            break
+
+                        except ValueError:
+                            print("Invalid price.")
+
                     print("Price updated successfully.")
 
                 elif choice == "2":
-                    product.quantity = int(input("Enter new quantity: "))
+                    while True:
+                        try:
+                            product.quantity = int(input("Enter new quantity: "))
+
+                            if product.quantity < 0:
+                                print("Quantity can not be negative.")
+                                continue
+
+                            break
+
+                        except ValueError:
+                            print("Invalid Quantity.")
+
                     print("Quantity updated successfully.")
 
                 else:
                     print("Invalid choice.")
+
+                self.save_products()
 
                 return
 
@@ -102,6 +211,8 @@ class InventoryManagementSystem:
                     return
 
                 product.quantity -= quantity
+
+                self.save_products()
 
                 print(f"{quantity} unit(s) sold successfully.")
                 print(f"Current Stock: {product.quantity}")
