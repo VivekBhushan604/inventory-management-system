@@ -62,6 +62,28 @@ class InventoryManagementSystem:
             self.products = []
 
 
+    def search_product(self):
+        if not self.products:
+            print("No products available.")
+            return
+
+        while True:
+            name = input("Enter product name: ").strip()
+
+            if name:
+                break
+
+            print("Product name cannot be empty.")
+
+        for product in self.products:
+            if product.name.lower() == name.lower():
+                print("\nProduct Found\n")
+                product.display()
+                return
+
+        print("Product not found.")
+
+
     def add_product(self):
         while True:
             name = input("Enter product name: ").strip()
@@ -122,7 +144,8 @@ class InventoryManagementSystem:
         if not self.products:
             print("No products available.")
             return
-
+        
+        print(f"\nTotal Products: {len(self.products)}\n")
         print("\nProducts\n")
 
         for product in self.products:
@@ -132,7 +155,14 @@ class InventoryManagementSystem:
         if not self.products:
             print("No products available.")
             return
-        name = input("Enter product name to update: ").strip()
+        
+        while True:
+            name = input("Enter product name to update: ").strip()
+
+            if name:
+                break
+
+            print("Product name cannot be empty.")
 
         for product in self.products:
             if product.name.lower() == name.lower():
@@ -156,6 +186,7 @@ class InventoryManagementSystem:
                         except ValueError:
                             print("Invalid price.")
 
+                    self.save_products()
                     print("Price updated successfully.")
 
                 elif choice == "2":
@@ -172,12 +203,13 @@ class InventoryManagementSystem:
                         except ValueError:
                             print("Invalid Quantity.")
 
+                    self.save_products()
                     print("Quantity updated successfully.")
 
                 else:
                     print("Invalid choice.")
 
-                self.save_products()
+                
 
                 return
 
@@ -189,7 +221,13 @@ class InventoryManagementSystem:
             print("No products available.")
             return
 
-        name = input("Enter product name to sell: ").strip()
+        while True:
+            name = input("Enter product name to sell: ").strip()
+
+            if name:
+                break
+
+            print("Product name cannot be empty.")
 
         for product in self.products:
             if product.name.lower() == name.lower():
@@ -230,7 +268,8 @@ while True:
     print("2. View Products")
     print("3. Update Product")
     print("4. Sell Product")
-    print("5. Exit")
+    print("5. Search Product")
+    print("6. Exit")
 
     choice = input("Enter choice: ")
 
@@ -247,6 +286,9 @@ while True:
         system.sell_product()
 
     elif choice == "5":
+        system.search_product()
+
+    elif choice == "6":
         print("Goodbye!")
         break
 
